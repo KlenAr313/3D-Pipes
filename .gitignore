@@ -30,3 +30,11 @@
 *.exe
 *.out
 *.app
+
+# Ide & Other
+.vs/
+bin/
+obj/
+*.bin
+.vscode/
+x64/
