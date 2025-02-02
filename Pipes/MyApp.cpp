@@ -543,6 +543,7 @@ void CMyApp::Render()
 	glUseProgram(m_programPostprocessID);
 	glUniform1i(ul("frameTex"), 0);
 	glUniform1i(ul("depthTex"), 1);
+	glUniform1i(ul("dof"), dof);
 
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
@@ -803,6 +804,10 @@ void CMyApp::RenderGUI()
 				m_guiCurrentItem = -1;
 			}
 		}
+
+
+		ImGui::SeparatorText("Depth of Field -- under consturction");
+		ImGui::Checkbox("Depth of field", &dof);
 	}
 
 	ImGui::End();

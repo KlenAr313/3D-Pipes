@@ -153,5 +153,8 @@ protected:
 	//imGui
 	int m_guiCurrentItem = -1;
 	glm::vec3 m_newColor = glm::vec3(0.0,0.0,0.0);
+
+	// for postProcess
+	bool dof = false;
 };
 
