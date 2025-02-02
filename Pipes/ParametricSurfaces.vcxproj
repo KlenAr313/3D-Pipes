@@ -118,9 +118,7 @@
     <None Include="Shaders\Vert_skybox.vert" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Assets\colorTex.jpg" />
     <Image Include="Assets\color_checkerboard.png" />
-    <Image Include="Assets\earth-height-map.png" />
     <Image Include="Assets\SkyBox2\cubemap.png" />
     <Image Include="Assets\SkyBox2\xneg.png" />
     <Image Include="Assets\SkyBox2\xpos.png" />

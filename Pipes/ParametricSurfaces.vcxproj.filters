@@ -138,12 +138,6 @@
     <Image Include="Assets\color_checkerboard.png">
       <Filter>Assets</Filter>
     </Image>
-    <Image Include="Assets\earth-height-map.png">
-      <Filter>Assets</Filter>
-    </Image>
-    <Image Include="Assets\colorTex.jpg">
-      <Filter>Assets</Filter>
-    </Image>
     <Image Include="Assets\SkyBox2\cubemap.png">
       <Filter>Assets\SkyBox2</Filter>
     </Image>

@@ -113,9 +113,6 @@ protected:
 	void CleanGeometry();
 
 	// Textúrázás, és változói
-
-	GLuint m_TextureID = 0;
-	GLuint m_ColorTextureID = 0;
 	GLuint m_skyboxTextureID = 0;
 
 	void InitTextures();

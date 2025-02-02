@@ -3,20 +3,15 @@
 // VBO-ból érkező változók
 layout( location = 0 ) in vec3 vs_in_pos;
 //layout( location = 1 ) in vec3 vs_in_norm;
-layout( location = 1 ) in vec2 vs_in_tex;
 
 // a pipeline-ban tovább adandó értékek
 out vec3 vs_out_pos;
 out vec3 vs_out_norm;
-out vec2 vs_out_tex;
 
 // shader külső paraméterei - most a három transzformációs mátrixot külön-külön vesszük át
 uniform mat4 world;
 uniform mat4 worldIT;
 uniform mat4 viewProj;
-
-//uniform sampler2D texImage;
-uniform sampler2D colorTexImage;
 
 float r = 0.3;
 
@@ -30,8 +25,6 @@ void main()
 			r * sin(u),
 			v,
 			r * cos(u));
-
-	vs_out_tex = vs_in_tex;
 
 	vs_out_norm = normalize(vec3(
 				sin(u),

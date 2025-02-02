@@ -87,113 +87,6 @@ struct Param
 	}
 };
 
-struct Sphere
-{
-	float r;
-
-	Sphere(float _r = 1.0f) : r(_r)
-	{ }
-
-	glm::vec3 GetPos(float u, float v) const noexcept
-	{
-		u *= glm::two_pi<float>();
-		v *= glm::pi<float>();
-
-		return glm::vec3( 
-			r * sinf(v) * cosf(u),
-			r * cosf(v),
-			r * sinf(v) * sinf(u));
-	}
-	glm::vec3 GetNorm(float u, float v) const noexcept
-	{
-		/*u *= glm::two_pi<float>();
-		v *= glm::pi<float>();
-
-		return glm::vec3(
-			 sinf(v) * cosf(u),
-			 cosf(v),
-			 sinf(v) * sinf(u));*/
-
-		glm::vec3 du = GetPos(u + 0.01f, v) - GetPos(u - 0.01f, v);
-		glm::vec3 dv = GetPos(u, v + 0.01f) - GetPos(u, v - 0.01f);
-
-		return glm::normalize(glm::cross(du, dv));
-	}
-	glm::vec2 GetTex(float u, float v) const noexcept
-	{
-		return glm::vec2(u, v);
-	}
-};
-
-struct Torus
-{
-	float r;
-	float R;
-
-	Torus(float _r = 2.0f, float _R = 2.0f) : r(_r), R(_R)
-	{ }
-
-	glm::vec3 GetPos(float u, float v) const noexcept
-	{
-		u *= glm::two_pi<float>();
-		v *= glm::two_pi<float>();
-
-		return glm::vec3(
-			(R + r * cosf(u)) * cosf(v),
-			r * sinf(u),
-			(R + r * cosf(u)) * sinf(v));
-	}
-	glm::vec3 GetNorm(float u, float v) const noexcept
-	{
-		/*u *= glm::two_pi<float>();
-		v *= glm::two_pi<float>();
-
-		glm::vec3 du = glm::vec3(-sinf(u) *cosf(v),cosf(u), -sinf(u)*sinf(v));
-		glm::vec3 dv = glm::vec3(-sinf(v), 0.f, cosf(v));*/
-		
-		glm::vec3 du = GetPos(u + 0.01f, v) - GetPos(u - 0.01f, v);
-		glm::vec3 dv = GetPos(u, v + 0.01f) - GetPos(u, v - 0.01f);
-
-		return glm::normalize(glm::cross(du,dv));
-	}
-	glm::vec2 GetTex(float u, float v) const noexcept
-	{
-		return glm::vec2(u, v);
-	}
-};
-
-struct SurfaceOfRevolution
-{
-	float ProfileFunc(float t) const noexcept
-	{
-		return  t * t;
-	}
-
-	glm::vec3 GetPos(float u, float v) const noexcept
-	{
-		u *= glm::two_pi<float>();
-
-		float r = ProfileFunc(v);
-
-		return glm::vec3(
-			r * cosf(u),
-			v,
-			-r * sinf(u)
-		);
-	}
-	glm::vec3 GetNorm(float u, float v) const noexcept
-	{
-		glm::vec3 du = GetPos(u + 0.01f, v) - GetPos(u - 0.01f, v);
-		glm::vec3 dv = GetPos(u, v + 0.01f) - GetPos(u, v - 0.01f);
-
-		return glm::normalize(glm::cross(du, dv));
-	}
-	glm::vec2 GetTex(float u, float v) const noexcept
-	{
-		return glm::vec2(u, v);
-	}
-};
-
 void CMyApp::InitFrameBufferObject()
 {
 	// FBO létrehozása
@@ -323,11 +216,6 @@ void CMyApp::CleanGeometry()
 
 void CMyApp::InitTextures()
 {
-
-	glGenTextures(1, &m_ColorTextureID);
-	TextureFromFile(m_ColorTextureID, "Assets/colorTex.jpg" );
-	SetupTextureSampling(GL_TEXTURE_2D, m_ColorTextureID);
-
 	glGenTextures(1, &m_skyboxTextureID);
 	TextureFromFile(m_skyboxTextureID, "Assets/SkyBox2/xpos.png", GL_TEXTURE_CUBE_MAP, GL_TEXTURE_CUBE_MAP_POSITIVE_X);
 	TextureFromFile(m_skyboxTextureID, "Assets/SkyBox2/xneg.png", GL_TEXTURE_CUBE_MAP, GL_TEXTURE_CUBE_MAP_NEGATIVE_X);
@@ -342,8 +230,6 @@ void CMyApp::InitTextures()
 
 void CMyApp::CleanTextures()
 {
-	glDeleteTextures( 1, &m_TextureID );
-	glDeleteTextures( 1, &m_ColorTextureID);
 	glDeleteTextures(1, &m_skyboxTextureID);
 }
 
@@ -432,10 +318,6 @@ void CMyApp::Render()
 		// - VAO beállítása
 		glBindVertexArray(m_surfaceGPU.vaoID);
 
-		// - Textúrák beállítása, minden egységre külön
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, m_ColorTextureID);
-
 		for (auto element : pipeSystem->elements)
 		{
 			if (element->ID == m_reColorAt && m_colorChangeForFbo)
@@ -470,10 +352,6 @@ void CMyApp::Render()
 		// - VAO kikapcs
 		glBindVertexArray(0);
 
-		// - Textúrák kikapcsolása, minden egységre külön
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, 0);
-
 		RenderSkyBox();
 		m_needFreshFboByMouse = false;
 		m_needFreshFboByLight = false; 
@@ -486,10 +364,6 @@ void CMyApp::Render()
 	{
 		// - VAO beállítása
 		glBindVertexArray(m_surfaceGPU.vaoID);
-
-		// - Textúrák beállítása, minden egységre külön
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, m_ColorTextureID);
 
 		for (auto element : pipeSystem->freshElements)
 		{
@@ -522,9 +396,6 @@ void CMyApp::Render()
 		}
 
 		m_colorChangeForFbo = false;
-		// - Textúrák kikapcsolása, minden egységre külön
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, 0);
 
 		m_freshPipes = false;
 	}
@@ -704,10 +575,6 @@ void CMyApp::SetupLightsAndOther()
 	glUniform3fv(ul("Ks"), 1, glm::value_ptr(m_Ks));
 
 	glUniform1f(ul("Shininess"), m_Shininess);
-
-	// - textúraegységek beállítása
-	glUniform1i(ul("texImage"), 0);
-	glUniform1i(ul("colorTexImage"), 1);
 }
 
 void CMyApp::RenderGUI()
