@@ -559,6 +559,7 @@ void CMyApp::SetupLightsAndOther()
 	glUniformMatrix4fv(ul("viewProj"), 1, GL_FALSE, glm::value_ptr(m_camera.GetViewProj()));
 	// - Fényforrások beállítása
 	glUniform3fv(ul("cameraPos"), 1, glm::value_ptr(m_camera.GetEye()));
+	glUniform3fv(ul("cameraLookDirection"), 1, glm::value_ptr(m_camera.GetNormLookDir()));
 	glUniform4fv(ul("lightPos"), 1, glm::value_ptr(m_lightPos));
 
 	glUniform3fv(ul("La"), 1, glm::value_ptr(m_La));

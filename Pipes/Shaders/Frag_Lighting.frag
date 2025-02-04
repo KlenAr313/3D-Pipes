@@ -8,6 +8,7 @@ in vec3 vs_out_norm;
 out vec4 fs_out_col;
 
 uniform vec3 cameraPos;
+uniform vec3 cameraLookDirection;
 
 uniform vec3 color;
 
@@ -44,7 +45,12 @@ uniform float Shininess = 1.0;
 
 void main()
 {
-	if (isSelected)
+	vec3 normal = normalize( vs_out_norm );
+	if(abs(dot(normal, cameraLookDirection)) < 0.4)
+	{
+		fs_out_col = vec4(0.0,0.0,0.0, 0.0);
+	}
+	else if (isSelected)
 	{
 		fs_out_col = vec4(1.0,1.0,1.0, 0.0);
 	}
@@ -52,7 +58,6 @@ void main()
 	{
 		// A fragment normálvektora
 		// MINDIG normalizáljuk!
-		vec3 normal = normalize( vs_out_norm );
 	
 		vec3 ToLight; // A fényforrásBA mutató vektor
 		float LightDistance=0.0; // A fényforrástól vett távolság
@@ -87,13 +92,13 @@ void main()
 		vec3 Diffuse = DiffuseFactor * Ld * Kd;
 	
 		// Spekuláris komponens
-		vec3 viewDir = normalize( cameraPos - vs_out_pos ); // A fragmentből a kamerába mutató vektor
+		vec3 viewToFrag = normalize( cameraPos - vs_out_pos ); // A fragmentből a kamerába mutató vektor
 		vec3 reflectDir = reflect( -ToLight, normal ); // Tökéletes visszaverődés vektora
 	
 		// A spekuláris komponens a tökéletes visszaverődés iránya és a kamera irányától függ.
 		// A koncentráltsága cos()^s alakban számoljuk, ahol s a fényességet meghatározó paraméter.
 		// Szintén függ az attenuációtól.
-		float SpecularFactor = pow(max( dot( viewDir, reflectDir) ,0.0), Shininess) * Attenuation;
+		float SpecularFactor = pow(max( dot( viewToFrag, reflectDir) ,0.0), Shininess) * Attenuation;
 		vec3 Specular = SpecularFactor*Ls*Ks;
 
 		// normal vector debug:

@@ -18,6 +18,7 @@ void Camera::SetView(glm::vec3 _eye, glm::vec3 _at, glm::vec3 _worldUp)
 	m_at	   = _at;
 	m_worldUp  = _worldUp;
 
+	m_normLookDirection = glm::normalize(m_eye - m_at);
 	m_viewMatrix = glm::lookAt( m_eye, m_at, m_worldUp );
 }
 

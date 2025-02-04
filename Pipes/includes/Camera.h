@@ -17,6 +17,8 @@ public:
 	inline glm::mat4 GetProj() const { return m_projMatrix; }
 	inline glm::mat4 GetViewProj() const { return m_projMatrix * m_viewMatrix; }
 
+	inline glm::vec3 GetNormLookDir() const { return m_normLookDirection; }
+
 
 	void SetView(glm::vec3 _eye, glm::vec3 _at, glm::vec3 _up);
 
@@ -54,5 +56,7 @@ private:
 
 	// projection matrix
 	glm::mat4	m_projMatrix;
+
+	glm::vec3 m_normLookDirection;
 };
 

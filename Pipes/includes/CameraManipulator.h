@@ -26,6 +26,8 @@ public:
 	void MouseMove(const SDL_MouseMotionEvent& mouse);
 	void MouseWheel(const SDL_MouseWheelEvent& wheel );
 
+	glm::vec3 NormLookDirection();
+
 private:
     Camera* m_pCamera = nullptr;
 
