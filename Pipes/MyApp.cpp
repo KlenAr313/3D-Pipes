@@ -303,21 +303,27 @@ void CMyApp::Update( const SUpdateInfo& updateInfo )
 }
 
 void CMyApp::Render()
-{
+{	
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_STENCIL_TEST);
+	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 	glBindFramebuffer(GL_FRAMEBUFFER, m_frameBuffer); 
 	glDepthRange(0.0, 1.0);
 
+	glStencilFunc(GL_ALWAYS, 1, 0xFF);
+	glStencilMask(0xFF);
 
 	if (m_needFreshFboByMouse || m_needFreshFboByKey || m_needFreshFboByLight || m_colorChangeForFbo)
 	{
 		// töröljük a frampuffert (GL_COLOR_BUFFER_BIT)...
 		// ... és a mélységi Z puffert (GL_DEPTH_BUFFER_BIT)
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+		
 
 		// - VAO beállítása
 		glBindVertexArray(m_surfaceGPU.vaoID);
 
+		//Spheres
 		for (auto element : pipeSystem->elements)
 		{
 			if (element->ID == m_reColorAt && m_colorChangeForFbo)
@@ -328,22 +334,57 @@ void CMyApp::Render()
 			if (element->isSphere)
 			{
 				RenderSphere(element->posRot, element->color, element->ID);
+			}
+		}
 
+		//Cylinders
+		for (auto element : pipeSystem->elements)
+		{
+			if (element->ID == m_reColorAt && m_colorChangeForFbo)
+			{
+				element->color = m_newColor;
+			}
+
+			if (element->isSphere)
+			{
 				if (!element->isEnd)
 				{
 					RenderCylinder(element->posRot, element->color, element->ID, true);
-					RenderCircle(element->posRot, element->color, element->ID);
 				}
 
 				if (!element->isBegin)
 				{
 					RenderCylinder(element->prevPosRot, element->color, element->ID, true);
-					RenderCircle(element->prevPosRot, element->color, element->ID);
 				}
 			}
 			else
 			{
 				RenderCylinder(element->posRot, element->color, element->ID, false);
+			}
+		}
+
+		//Circles
+		for (auto element : pipeSystem->elements)
+		{
+			if (element->ID == m_reColorAt && m_colorChangeForFbo)
+			{
+				element->color = m_newColor;
+			}
+
+			if (element->isSphere)
+			{
+				if (!element->isEnd)
+				{
+					RenderCircle(element->posRot, element->color, element->ID);
+				}
+
+				if (!element->isBegin)
+				{
+					RenderCircle(element->prevPosRot, element->color, element->ID);
+				}
+			}
+			else
+			{
 				RenderCircle(element->posRot, element->color, element->ID);
 			}
 		}
@@ -365,6 +406,7 @@ void CMyApp::Render()
 		// - VAO beállítása
 		glBindVertexArray(m_surfaceGPU.vaoID);
 
+		//Spheres
 		for (auto element : pipeSystem->freshElements)
 		{
 			if (element->ID == m_reColorAt && m_colorChangeForFbo)
@@ -375,22 +417,57 @@ void CMyApp::Render()
 			if (element->isSphere)
 			{
 				RenderSphere(element->posRot, element->color, element->ID);
+			}
+		}
 
+		//Cylinders
+		for (auto element : pipeSystem->freshElements)
+		{
+			if (element->ID == m_reColorAt && m_colorChangeForFbo)
+			{
+				element->color = m_newColor;
+			}
+
+			if (element->isSphere)
+			{
 				if (!element->isEnd)
 				{
 					RenderCylinder(element->posRot, element->color, element->ID, true);
-					RenderCircle(element->posRot, element->color, element->ID);
 				}
 
 				if (!element->isBegin)
 				{
 					RenderCylinder(element->prevPosRot, element->color, element->ID, true);
-					RenderCircle(element->prevPosRot, element->color, element->ID);
 				}
 			}
 			else
 			{
 				RenderCylinder(element->posRot, element->color, element->ID, false);
+			}
+		}
+
+		//Circles
+		for (auto element : pipeSystem->freshElements)
+		{
+			if (element->ID == m_reColorAt && m_colorChangeForFbo)
+			{
+				element->color = m_newColor;
+			}
+
+			if (element->isSphere)
+			{
+				if (!element->isEnd)
+				{
+					RenderCircle(element->posRot, element->color, element->ID);
+				}
+
+				if (!element->isBegin)
+				{
+					RenderCircle(element->prevPosRot, element->color, element->ID);
+				}
+			}
+			else
+			{
 				RenderCircle(element->posRot, element->color, element->ID);
 			}
 		}
@@ -399,6 +476,10 @@ void CMyApp::Render()
 
 		m_freshPipes = false;
 	}
+
+	glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+	glStencilMask(0x00);
+	glDisable(GL_DEPTH_TEST);
 
 	//Back to default fbo
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);

@@ -45,12 +45,7 @@ uniform float Shininess = 1.0;
 
 void main()
 {
-	vec3 normal = normalize( vs_out_norm );
-	if(abs(dot(normal, cameraLookDirection)) < 0.4)
-	{
-		fs_out_col = vec4(0.0,0.0,0.0, 0.0);
-	}
-	else if (isSelected)
+	if (isSelected)
 	{
 		fs_out_col = vec4(1.0,1.0,1.0, 0.0);
 	}
@@ -58,6 +53,7 @@ void main()
 	{
 		// A fragment normálvektora
 		// MINDIG normalizáljuk!
+		vec3 normal = normalize( vs_out_norm );
 	
 		vec3 ToLight; // A fényforrásBA mutató vektor
 		float LightDistance=0.0; // A fényforrástól vett távolság
